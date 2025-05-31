@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents System - Complete Management Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E10075 0%, #C21855 50%, #8B0045 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* AUTHENTICATION SYSTEM */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #E10075 0%, #C21855 50%, #8B0045 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: authSlideIn 0.6s ease-out;
+        }
+
+        @keyframes authSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .auth-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .auth-subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .auth-input {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #E10075;
+            box-shadow: 0 0 0 3px rgba(225, 0, 117, 0.1);
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #E10075 0%, #C21855 50%, #8B0045 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(225, 0, 117, 0.4);
+        }
+
+        .auth-error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* MAIN NAVIGATION */
+        .main-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .nav-tab:hover {
+            background: rgba(225, 0, 117, 0.1);
+            color: #E10075;
+        }
+
+        .nav-tab.active {
+            background: #E10075;
+            color: white;
+            border-color: #E10075;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #4a5568;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(225, 0, 117, 0.1);
+            border-color: #E10075;
+            color: #E10075;
+        }
+
+        /* MAIN CONTAINER */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* AGENTS TAB AREA */
+        .agents-tab {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .tab-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-icon {
+            font-size: 1.8rem;
+        }
+
+        .tab-subtitle {
+            color: #718096;
+            margin-top: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .tab-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E10075 0%, #C21855 50%, #8B0045 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 0, 117, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+        }
+
+        /* CONFIGURATION SECTIONS */
+        .config-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid #f1f5f9;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .config-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .config-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .config-status.connected {
+            color: #059669;
+        }
+
+        .config-status.disconnected {
+            color: #dc2626;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: #E10075;
+            box-shadow: 0 0 0 3px rgba(225, 0, 117, 0.1);
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn-test {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-test:hover {
+            background: #d97706;
+        }
+
+        .btn-save {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background: #047857;
+        }
+
+        .btn-clear {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear:hover {
+            background: #b91c1c;
+        }
+
+        /* COST TRACKING */
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .cost-card {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .cost-card.requests {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .cost-card.tokens {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .cost-card.avg {
+            background: rgba(225, 0, 117, 0.1);
+        }
+
+        .cost-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .cost-value.requests {
+            color: #059669;
+        }
+
+        .cost-value.tokens {
+            color: #3b82f6;
+        }
+
+        .cost-value.avg {
+            color: #E10075;
+        }
+
+        .cost-label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* SEARCH AND FILTER BAR */
+        .search-filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #E10075;
+            box-shadow: 0 0 0 3px rgba(225, 0, 117, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            border-color: #E10075;
+            color: #E10075;
+        }
+
+        .filter-btn.active {
+            background: #E10075;
+            border-color: #E10075;
+            color: white;
+        }
+
+        /* AGENTS GRID */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* AGENT CARD */
+        .agent-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(225, 0, 117, 0.15);
+            border-color: #E10075;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #E10075, #C21855);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .agent-info {
+            flex: 1;
+        }
+
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-role {
+            color: #E10075;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .agent-status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #059669;
+        }
+
+        .agent-status.inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .agent-status.training {
+            background: rgba(251, 191, 36, 0.1);
+            color: #d97706;
+        }
+
+        .agent-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .action-btn.edit:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .action-btn.delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn.run {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .action-btn.run:hover {
+            background: #22c55e;
+            color: white;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .agent-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .agent-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(225, 0, 117, 0.1);
+            color: #E10075;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .agent-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #a0aec0;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .empty-description {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #a0aec0;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #E10075;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #E10075;
+            box-shadow: 0 0 0 3px rgba(225, 0, 117, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-cancel:hover {
+            background: #edf2f7;
+        }
+
+        /* OTHER TABS */
+        .other-tab {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #666;
+        }
+
+        /* RESPONSIVENESS */
+        @media (max-width: 768px) {
+            .main-nav {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-container {
+                padding: 0 1rem;
+            }
+
+            .agents-tab {
+                padding: 1.5rem;
+            }
+
+            .tab-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .tab-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        /* ANIMATIONS */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- AUTHENTICATION OVERLAY -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-container">
+            <div class="auth-title">🤖</div>
+            <h2>AI Agents System</h2>
+            <p class="auth-subtitle">Enter your credentials to access the system</p>
+            
+            <form class="auth-form" id="authForm">
+                <input 
+                    type="text" 
+                    class="auth-input" 
+                    id="username" 
+                    placeholder="Username"
+                    required
+                >
+                <input 
+                    type="password" 
+                    class="auth-input" 
+                    id="password" 
+                    placeholder="Password"
+                    required
+                >
+                <div class="auth-error" id="authError">
+                    Invalid credentials. Please try again.
+                </div>
+                <button type="submit" class="auth-btn">
+                    🔓 Access System
+                </button>
+            </form>
+            
+            <div style="margin-top: 2rem; font-size: 0.85rem; color: #64748b;">
+                Demo: admin / admin123
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-title">🤖 AI Agents System</div>
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchTab('agents')">
+                    🎯 Manage Agents
+                </div>
+                <div class="nav-tab" onclick="switchTab('dashboard')">
+                    📊 Dashboard
+                </div>
+                <div class="nav-tab" onclick="switchTab('settings')">
+                    ⚙️ Settings
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        
+        <!-- AGENTS TAB -->
+        <div id="agents-tab" class="agents-tab fade-in">
+            <div class="tab-header">
+                <div>
+                    <div class="tab-title">
+                        <span class="tab-icon">🤖</span>
+                        AI Agents Manager
+                    </div>
+                    <div class="tab-subtitle">
+                        Create, edit and organize your AI agents
+                    </div>
+                </div>
+                <div class="tab-actions">
+                    <button class="btn btn-secondary">
+                        🔍 Search
+                    </button>
+                    <button class="btn btn-primary" onclick="openAgentModal()">
+                        ➕ New Agent
+                    </button>
+                </div>
+            </div>
+
+            <!-- CLAUDE API CONFIGURATION -->
+            <div class="config-section">
+                <div class="config-header">
+                    <div class="config-title">
+                        🔑 Claude API Configuration
+                    </div>
+                    <div class="config-status disconnected" id="apiKeyStatus">
+                        <span>●</span> Not Connected
+                    </div>
+                </div>
+                <input 
+                    type="password" 
+                    class="config-input" 
+                    id="apiKeyInput" 
+                    placeholder="Enter your Claude API Key (sk-ant-...)"
+                >
+                <div class="config-actions">
+                    <button class="btn-test" onclick="testApiKey()">
+                        🧪 Test Connection
+                    </button>
+                    <button class="btn-save" onclick="saveApiKey()">
+                        💾 Save Key
+                    </button>
+                    <button class="btn-clear" onclick="clearApiKey()">
+                        🗑️ Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- GITHUB INTEGRATION -->
+            <div class="config-section">
+                <div class="config-header">
+                    <div class="config-title">
+                        📁 GitHub Data Source
+                    </div>
+                    <div class="config-status connected" id="githubStatus">
+                        <span>●</span> Connected
+                    </div>
+                </div>
+                <input 
+                    type="text" 
+                    class="config-input" 
+                    id="githubUrlInput" 
+                    placeholder="https://raw.githubusercontent.com/YOUR-USERNAME/ai-agents-system/main/atividades_pmo.xlsx"
+                >
+                <div class="config-actions">
+                    <button class="btn-test" onclick="testGithubConnection()">
+                        🔍 Test Access
+                    </button>
+                    <button class="btn-save" onclick="saveGithubUrl()">
+                        💾 Save URL
+                    </button>
+                </div>
+            </div>
+
+            <!-- COST TRACKING -->
+            <div class="config-section">
+                <div class="config-header">
+                    <div class="config-title">
+                        💰 Cost Tracking (Claude Haiku)
+                    </div>
+                    <div class="config-status" id="costStatus">
+                        <span>💵</span> $<span id="totalCost">0.00</span> total
+                    </div>
+                </div>
+                <div class="cost-grid">
+                    <div class="cost-card requests">
+                        <div class="cost-value requests" id="totalRequests">0</div>
+                        <div class="cost-label">Total Requests</div>
+                    </div>
+                    <div class="cost-card tokens">
+                        <div class="cost-value tokens" id="totalTokens">0</div>
+                        <div class="cost-label">Total Tokens</div>
+                    </div>
+                    <div class="cost-card avg">
+                        <div class="cost-value avg" id="avgCostPerRun">$0.00</div>
+                        <div class="cost-label">Avg Cost/Run</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <button class="btn-clear" onclick="resetCostTracking()">
+                        🗑️ Reset Tracking
+                    </button>
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <!-- SEARCH AND FILTER BAR -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <div class="search-icon">🔍</div>
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            placeholder="Search agents by name, role, or description..."
+                            id="searchInput"
+                        >
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="active">Active</button>
+                        <button class="filter-btn" data-filter="inactive">Inactive</button>
+                        <button class="filter-btn" data-filter="training">Training</button>
+                    </div>
+                </div>
+
+                <!-- AGENTS GRID -->
+                <div class="agents-grid" id="agentsGrid">
+                    <!-- Agents will be dynamically loaded here -->
+                </div>
+
+                <!-- EMPTY STATE -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">🤖</div>
+                    <div class="empty-title">No Agents Found</div>
+                    <div class="empty-description">
+                        Get started by creating your first AI agent. Click the "New Agent" button above to begin.
+                    </div>
+                    <button class="btn btn-primary" onclick="openAgentModal()">
+                        ➕ Create Your First Agent
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard-tab" class="other-tab">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>📊 PMO Dashboard</h2>
+                <p style="color: #64748b;">Your existing Streamlit dashboard integrated</p>
+            </div>
+            
+            <div style="width: 100%; height: 600px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <iframe 
+                    src="https://your-dashboard-pmo.streamlit.app" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0"
+                    style="border-radius: 15px;"
+                ></iframe>
+            </div>
+            
+            <div style="text-align: center; margin-top: 1rem; color: #64748b; font-size: 0.9rem;">
+                💡 Replace the iframe src with your actual Streamlit dashboard URL
+            </div>
+        </div>
+
+        <div id="settings-tab" class="other-tab">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>⚙️ System Settings</h2>
+                <p style="color: #64748b;">Configure your AI Agents System</p>
+            </div>
+            
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">🔐 Security Settings</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Session Timeout (minutes)</label>
+                        <input type="number" value="60" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                    </div>
+                    <button class="btn btn-secondary">Update Security</button>
+                </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">🎨 Appearance</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Theme</label>
+                        <select style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                            <option>Magenta (Current)</option>
+                            <option>Blue</option>
+                            <option>Green</option>
+                            <option>Purple</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary">Apply Theme</button>
+                </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 15px;">
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">💾 Data Management</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="btn btn-secondary">Export Agents</button>
+                        <button class="btn btn-secondary">Import Agents</button>
+                        <button class="btn" style="background: #dc2626; color: white;">Clear All Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AGENT MODAL -->
+    <div class="modal-overlay" id="agentModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Create New Agent</h2>
+                <button class="modal-close" onclick="closeAgentModal()">✕</button>
+            </div>
+            
+            <form id="agentForm">
+                <div class="form-group">
+                    <label class="form-label" for="agentName">Agent Name</label>
+                    <input 
+                        type="text" 
+                        id="agentName" 
+                        class="form-input" 
+                        placeholder="Enter agent name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="agentRole">Role</label>
+                    <select id="agentRole" class="form-select" required>
+                        <option value="">Select a role</option>
+                        <option value="📊 Data Analytics">📊 Data Analytics</option>
+                        <option value="🔍 Risk Analysis">🔍 Risk Analysis</option>
+                        <option value="📋 Report Generation">📋 Report Generation</option>
+                        <option value="📈 Forecasting">📈 Forecasting</option>
+                        <option value="✍️ Content Generation">✍️ Content Generation</option>
+                        <option value="💻 Development">💻 Development</option>
+                        <option value="🎧 Customer Service">🎧 Customer Service</option>
+                        <option value="🎨 Creative Design">🎨 Creative Design</option>
+                        <option value="📈 Business Analysis">📈 Business Analysis</option>
+                        <option value="🔍 Research">🔍 Research</option>
+                        <option value="🌐 Translation">🌐 Translation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="agentDescription">Description</label>
+                    <textarea 
+                        id="agentDescription" 
+                        class="form-textarea" 
+                        placeholder="Describe what this agent does and its capabilities"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="agentTags">Tags (comma separated)</label>
+                    <input 
+                        type="text" 
+                        id="agentTags" 
+                        class="form-input" 
+                        placeholder="analytics, python, reports"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="agentStatus">Status</label>
+                    <select id="agentStatus" class="form-select" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="training">Training</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeAgentModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="submitBtnText">Create Agent</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // AUTHENTICATION SYSTEM
+        const AUTH_CREDENTIALS = {
+            admin: 'admin123',
+            user: 'user123',
+            demo: 'demo123'
+        };
+
+        function checkAuthentication() {
+            console.log('Checking authentication...');
+            const isAuthenticated = localStorage.getItem('aiAgentsAuth');
+            const authTime = localStorage.getItem('aiAgentsAuthTime');
+            
+            if (authTime && (Date.now() - parseInt(authTime)) > 3600000) {
+                console.log('Session expired, logging out');
+                logout();
+                return false;
+            }
+            
+            if (isAuthenticated === 'true') {
+                console.log('User is authenticated');
+                document.getElementById('authOverlay').style.display = 'none';
+                return true;
+            }
+            console.log('User is not authenticated');
+            return false;
+        }
+
+        function authenticateUser(username, password) {
+            console.log('Checking credentials for:', username);
+            
+            if (AUTH_CREDENTIALS[username] && AUTH_CREDENTIALS[username] === password) {
+                localStorage.setItem('aiAgentsAuth', 'true');
+                localStorage.setItem('aiAgentsAuthTime', Date.now().toString());
+                localStorage.setItem('currentUser', username);
+                console.log('Authentication successful');
+                return true;
+            }
+            console.log('Authentication failed');
+            return false;
+        }
+
+        function logout() {
+            console.log('Logging out user...');
+            localStorage.removeItem('aiAgentsAuth');
+            localStorage.removeItem('aiAgentsAuthTime');
+            localStorage.removeItem('currentUser');
+            
+            const authOverlay = document.getElementById('authOverlay');
+            if (authOverlay) {
+                authOverlay.style.display = 'flex';
+            }
+            
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            if (usernameInput) usernameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            console.log('Auth form submitted');
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('authError');
+            
+            if (authenticateUser(username, password)) {
+                document.getElementById('authOverlay').style.display = 'none';
+                errorDiv.style.display = 'none';
+                loadApiKey();
+                loadAgents();
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // CONFIGURATION MANAGEMENT
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('claude_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+                updateApiKeyStatus('connected', 'Connected');
+            }
+            
+            const savedGithubUrl = localStorage.getItem('github_data_url');
+            if (savedGithubUrl) {
+                document.getElementById('githubUrlInput').value = savedGithubUrl;
+            } else {
+                const defaultUrl = 'https://raw.githubusercontent.com/YOUR-USERNAME/ai-agents-system/main/atividades_pmo.xlsx';
+                document.getElementById('githubUrlInput').value = defaultUrl;
+                localStorage.setItem('github_data_url', defaultUrl);
+            }
+            
+            loadCostTracking();
+        }
+
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (apiKey) {
+                localStorage.setItem('claude_api_key', apiKey);
+                updateApiKeyStatus('connected', 'Saved');
+                showNotification('Claude API Key saved successfully!', 'success');
+            } else {
+                showNotification('Please enter a valid API key', 'error');
+            }
+        }
+
+        function clearApiKey() {
+            if (confirm('Are you sure you want to clear the API key?')) {
+                localStorage.removeItem('claude_api_key');
+                document.getElementById('apiKeyInput').value = '';
+                updateApiKeyStatus('disconnected', 'Not Connected');
+                showNotification('API Key cleared', 'info');
+            }
+        }
+
+        function saveGithubUrl() {
+            const githubUrl = document.getElementById('githubUrlInput').value.trim();
+            if (githubUrl) {
+                localStorage.setItem('github_data_url', githubUrl);
+                showNotification('GitHub URL saved successfully!', 'success');
+            } else {
+                showNotification('Please enter a valid GitHub URL', 'error');
+            }
+        }
+
+        function updateApiKeyStatus(status, text) {
+            const statusElement = document.getElementById('apiKeyStatus');
+            statusElement.className = 'config-status ' + status;
+            statusElement.innerHTML = '<span>●</span> ' + text;
+        }
+
+        function testApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                showNotification('Please enter an API key first', 'error');
+                return;
+            }
+
+            if (!apiKey.startsWith('sk-ant-') || apiKey.length < 20) {
+                showNotification('Invalid Claude API key format', 'error');
+                updateApiKeyStatus('disconnected', 'Invalid Format');
+                return;
+            }
+
+            updateApiKeyStatus('connected', 'Testing...');
+            
+            setTimeout(function() {
+                updateApiKeyStatus('connected', 'Connection Valid');
+                showNotification('API Key format is valid!', 'success');
+            }, 2000);
+        }
+
+        function testGithubConnection() {
+            const githubUrl = document.getElementById('githubUrlInput').value.trim();
+            if (!githubUrl) {
+                showNotification('Please enter a GitHub URL first', 'error');
+                return;
+            }
+
+            fetch(githubUrl)
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('File not accessible');
+                    }
+                })
+                .then(function(blob) {
+                    if (blob.size > 0) {
+                        document.getElementById('githubStatus').innerHTML = '<span>●</span> File Accessible';
+                        document.getElementById('githubStatus').className = 'config-status connected';
+                        showNotification('Excel file accessible from GitHub!', 'success');
+                    } else {
+                        throw new Error('Empty file');
+                    }
+                })
+                .catch(function(error) {
+                    document.getElementById('githubStatus').innerHTML = '<span>●</span> File Not Found';
+                    document.getElementById('githubStatus').className = 'config-status disconnected';
+                    showNotification('Cannot access Excel file from GitHub', 'error');
+                });
+        }
+
+        // COST TRACKING SYSTEM
+        let costTracking = {
+            totalRequests: 0,
+            totalTokens: 0,
+            totalCost: 0.0,
+            requestHistory: []
+        };
+
+        function loadCostTracking() {
+            const saved = localStorage.getItem('claude_cost_tracking');
+            if (saved) {
+                try {
+                    costTracking = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error loading cost tracking:', e);
+                }
+            }
+            updateCostDisplay();
+        }
+
+        function saveCostTracking() {
+            localStorage.setItem('claude_cost_tracking', JSON.stringify(costTracking));
+        }
+
+        function addCostEntry(tokens, cost) {
+            costTracking.totalRequests += 1;
+            costTracking.totalTokens += tokens;
+            costTracking.totalCost += cost;
+            costTracking.requestHistory.push({
+                timestamp: new Date().toISOString(),
+                tokens: tokens,
+                cost: cost
+            });
+            
+            if (costTracking.requestHistory.length > 100) {
+                costTracking.requestHistory = costTracking.requestHistory.slice(-100);
+            }
+            
+            saveCostTracking();
+            updateCostDisplay();
+        }
+
+        function updateCostDisplay() {
+            document.getElementById('totalCost').textContent = costTracking.totalCost.toFixed(4);
+            document.getElementById('totalRequests').textContent = costTracking.totalRequests.toLocaleString();
+            document.getElementById('totalTokens').textContent = costTracking.totalTokens.toLocaleString();
+            
+            const avgCost = costTracking.totalRequests > 0 ? costTracking.totalCost / costTracking.totalRequests : 0;
+            document.getElementById('avgCostPerRun').textContent = '$' + avgCost.toFixed(4);
+        }
+
+        function resetCostTracking() {
+            if (confirm('Are you sure you want to reset all cost tracking data?')) {
+                costTracking = {
+                    totalRequests: 0,
+                    totalTokens: 0,
+                    totalCost: 0.0,
+                    requestHistory: []
+                };
+                saveCostTracking();
+                updateCostDisplay();
+                showNotification('Cost tracking reset', 'info');
+            }
+        }
+
+        // NOTIFICATION SYSTEM
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? '#059669' : type === 'error' ? '#dc2626' : '#3b82f6';
+            
+            notification.style.cssText = 'position: fixed; top: 2rem; right: 2rem; background: ' + bgColor + 
+                '; color: white; padding: 1rem 1.5rem; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 3000; max-width: 300px; font-size: 0.9rem;';
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // AGENTS DATA MANAGEMENT
+        let agents = [];
+        let editingAgentId = null;
+
+        const defaultAgents = [
+            {
+                id: 'data-analyst',
+                name: 'Data Analyst Pro',
+                role: '📊 Data Analytics',
+                description: 'Specialized in analyzing complex datasets, generating insights, and creating detailed reports with visualizations.',
+                tags: ['Analytics', 'Reports', 'Python'],
+                status: 'active',
+                runs: 847,
+                lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: 'risk-monitor',
+                name: 'Risk Monitor',
+                role: '🔍 Risk Analysis',
+                description: 'Monitors project risks, identifies potential issues, and provides early warning alerts with mitigation strategies.',
+                tags: ['Risk', 'Monitoring', 'Alerts'],
+                status: 'active',
+                runs: 523,
+                lastUpdated: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: 'report-generator',
+                name: 'Report Generator',
+                role: '📋 Report Generation',
+                description: 'Automatically generates comprehensive project reports, status updates, and executive summaries.',
+                tags: ['Reports', 'Automation', 'Documentation'],
+                status: 'training',
+                runs: 234,
+                lastUpdated: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: 'forecast-agent',
+                name: 'Forecast Agent',
+                role: '📈 Forecasting',
+                description: 'Predicts project timelines, budget forecasts, and resource allocation using historical data and trends.',
+                tags: ['Forecasting', 'Planning', 'Analytics'],
+                status: 'inactive',
+                runs: 92,
+                lastUpdated: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        ];
+
+        function loadAgents() {
+            console.log('Loading agents...');
+            
+            const savedAgents = localStorage.getItem('aiAgents');
+            if (savedAgents) {
+                try {
+                    agents = JSON.parse(savedAgents);
+                    console.log('Loaded', agents.length, 'agents from localStorage');
+                } catch (e) {
+                    console.error('Error parsing saved agents:', e);
+                    agents = [...defaultAgents];
+                }
+            } else {
+                console.log('No saved agents found, loading defaults');
+                agents = [...defaultAgents];
+                saveAgents();
+            }
+            renderAgents();
+        }
+
+        function saveAgents() {
+            localStorage.setItem('aiAgents', JSON.stringify(agents));
+        }
+
+        function createAgent(agentData) {
+            const newAgent = {
+                id: Date.now().toString(),
+                ...agentData,
+                runs: 0,
+                lastUpdated: new Date().toISOString()
+            };
+            agents.push(newAgent);
+            saveAgents();
+            renderAgents();
+            showNotification('Agent created successfully!', 'success');
+        }
+
+        function updateAgent(agentId, agentData) {
+            const index = agents.findIndex(function(agent) { return agent.id === agentId; });
+            if (index !== -1) {
+                agents[index] = {
+                    ...agents[index],
+                    ...agentData,
+                    lastUpdated: new Date().toISOString()
+                };
+                saveAgents();
+                renderAgents();
+                showNotification('Agent updated successfully!', 'success');
+            }
+        }
+
+        function deleteAgent(agentId) {
+            const index = agents.findIndex(function(agent) { return agent.id === agentId; });
+            if (index !== -1) {
+                agents.splice(index, 1);
+                saveAgents();
+                renderAgents();
+                showNotification('Agent deleted successfully!', 'info');
+            }
+        }
+
+        function getAgent(agentId) {
+            return agents.find(function(agent) { return agent.id === agentId; });
+        }
+
+        // AGENT RENDERING
+        function renderAgents() {
+            console.log('Rendering agents...');
+            
+            const grid = document.getElementById('agentsGrid');
+            if (!grid) {
+                console.error('Agents grid not found!');
+                return;
+            }
+            
+            grid.innerHTML = '';
+
+            agents.forEach(function(agent) {
+                const card = createAgentCard(agent);
+                grid.appendChild(card);
+            });
+
+            console.log('Rendered', agents.length, 'agent cards');
+            checkEmptyState();
+        }
+
+        function createAgentCard(agent) {
+            const card = document.createElement('div');
+            card.className = 'agent-card';
+            card.setAttribute('data-status', agent.status);
+            card.setAttribute('data-id', agent.id);
+
+            const statusClass = agent.status;
+            const statusText = agent.status.charAt(0).toUpperCase() + agent.status.slice(1);
+            const timeAgo = getTimeAgo(agent.lastUpdated);
+
+            const tagsHtml = agent.tags.map(function(tag) {
+                return '<span class="agent-tag">' + tag + '</span>';
+            }).join('');
+
+            card.innerHTML = 
+                '<div class="agent-header">' +
+                    '<div class="agent-info">' +
+                        '<div class="agent-name">' + agent.name + '</div>' +
+                        '<div class="agent-role">' + agent.role + '</div>' +
+                        '<div class="agent-status ' + statusClass + '">' +
+                            '<span>●</span> ' + statusText +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="agent-actions">' +
+                        '<button class="action-btn run" title="Run Agent" data-action="run" data-id="' + agent.id + '" ' + (agent.status !== 'active' ? 'disabled' : '') + '>▶️</button>' +
+                        '<button class="action-btn edit" title="Edit Agent" data-action="edit" data-id="' + agent.id + '">✏️</button>' +
+                        '<button class="action-btn delete" title="Delete Agent" data-action="delete" data-id="' + agent.id + '">🗑️</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="agent-description">' + agent.description + '</div>' +
+                '<div class="agent-tags">' + tagsHtml + '</div>' +
+                '<div class="agent-stats">' +
+                    '<div class="stat-item">' +
+                        '<span>⚡</span> ' + agent.runs.toLocaleString() + ' runs' +
+                    '</div>' +
+                    '<div class="stat-item">' +
+                        '<span>📅</span> ' + timeAgo +
+                    '</div>' +
+                '</div>';
+
+            return card;
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMinutes = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMinutes < 60) {
+                return diffMinutes + ' minutes ago';
+            } else if (diffHours < 24) {
+                return diffHours + ' hours ago';
+            } else {
+                return diffDays + ' days ago';
+            }
+        }
+
+        // AGENT ACTIONS
+        function runAgent(agentId) {
+            const agent = getAgent(agentId);
+            if (!agent) return;
+
+            const apiKey = localStorage.getItem('claude_api_key');
+            if (!apiKey) {
+                showNotification('Please configure your Claude API key first', 'error');
+                return;
+            }
+
+            if (agent.status !== 'active') {
+                showNotification('Agent must be active to run', 'error');
+                return;
+            }
+
+            showNotification('🚀 Running ' + agent.name + '...', 'info');
+            
+            // Simulate agent execution for demo
+            setTimeout(function() {
+                agent.runs += 1;
+                agent.lastUpdated = new Date().toISOString();
+                
+                // Simulate cost tracking
+                const simulatedTokens = Math.floor(Math.random() * 1000) + 500;
+                const simulatedCost = simulatedTokens / 1000 * 0.00125;
+                addCostEntry(simulatedTokens, simulatedCost);
+                
+                saveAgents();
+                renderAgents();
+                
+                showNotification('✅ ' + agent.name + ' completed successfully! Cost: $' + simulatedCost.toFixed(4), 'success');
+            }, 2000);
+        }
+
+        function editAgent(agentId) {
+            const agent = getAgent(agentId);
+            if (agent) {
+                editingAgentId = agentId;
+                populateForm(agent);
+                openAgentModal(agent);
+            }
+        }
+
+        function deleteAgentById(agentId) {
+            const agent = getAgent(agentId);
+            if (agent && confirm('Are you sure you want to delete "' + agent.name + '"?')) {
+                deleteAgent(agentId);
+            }
+        }
+
+        // TAB SWITCHING
+        function switchTab(tabName) {
+            console.log('Switching to tab:', tabName);
+            
+            document.querySelectorAll('.nav-tab').forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+
+            document.querySelectorAll('[id$="-tab"]').forEach(function(content) {
+                content.style.display = 'none';
+            });
+
+            const tabButtons = document.querySelectorAll('.nav-tab');
+            tabButtons.forEach(function(button) {
+                const buttonText = button.textContent.toLowerCase();
+                if (
+                    (tabName === 'agents' && buttonText.includes('manage agents')) ||
+                    (tabName === 'dashboard' && buttonText.includes('dashboard')) ||
+                    (tabName === 'settings' && buttonText.includes('settings'))
+                ) {
+                    button.classList.add('active');
+                }
+            });
+            
+            const targetTab = document.getElementById(tabName + '-tab');
+            if (targetTab) {
+                targetTab.style.display = 'block';
+                targetTab.classList.add('fade-in');
+            }
+        }
+
+        // MODAL FUNCTIONS
+        function openAgentModal(agentData) {
+            const modal = document.getElementById('agentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const submitBtn = document.getElementById('submitBtnText');
+            const form = document.getElementById('agentForm');
+            
+            if (agentData) {
+                modalTitle.textContent = 'Edit Agent';
+                submitBtn.textContent = 'Update Agent';
+                populateForm(agentData);
+            } else {
+                modalTitle.textContent = 'Create New Agent';
+                submitBtn.textContent = 'Create Agent';
+                form.reset();
+                editingAgentId = null;
+            }
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAgentModal() {
+            const modal = document.getElementById('agentModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            editingAgentId = null;
+        }
+
+        function populateForm(agentData) {
+            document.getElementById('agentName').value = agentData.name || '';
+            document.getElementById('agentRole').value = agentData.role || '';
+            document.getElementById('agentDescription').value = agentData.description || '';
+            document.getElementById('agentTags').value = agentData.tags ? agentData.tags.join(', ') : '';
+            document.getElementById('agentStatus').value = agentData.status || 'active';
+        }
+
+        // SEARCH AND FILTER
+        function filterAgents(filterType) {
+            const cards = document.querySelectorAll('.agent-card');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelector('[data-filter="' + filterType + '"]').classList.add('active');
+            
+            cards.forEach(function(card) {
+                const status = card.getAttribute('data-status');
+                if (filterType === 'all' || status === filterType) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            checkEmptyState();
+        }
+
+        function searchAgents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.agent-card');
+            
+            cards.forEach(function(card) {
+                const name = card.querySelector('.agent-name').textContent.toLowerCase();
+                const role = card.querySelector('.agent-role').textContent.toLowerCase();
+                const description = card.querySelector('.agent-description').textContent.toLowerCase();
+                
+                const matchesSearch = name.includes(searchTerm) || 
+                                    role.includes(searchTerm) || 
+                                    description.includes(searchTerm);
+                
+                if (matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            checkEmptyState();
+        }
+
+        function checkEmptyState() {
+            const visibleCards = document.querySelectorAll('.agent-card:not([style*="none"])').length;
+            const emptyState = document.getElementById('emptyState');
+            const agentsGrid = document.getElementById('agentsGrid');
+            
+            if (visibleCards === 0) {
+                emptyState.style.display = 'block';
+                agentsGrid.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                agentsGrid.style.display = 'grid';
+            }
+        }
+
+        // FORM SUBMISSION
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('agentName').value.trim(),
+                role: document.getElementById('agentRole').value,
+                description: document.getElementById('agentDescription').value.trim(),
+                tags: document.getElementById('agentTags').value.split(',').map(function(tag) { return tag.trim(); }).filter(function(tag) { return tag; }),
+                status: document.getElementById('agentStatus').value
+            };
+            
+            if (!formData.name || !formData.role || !formData.description) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (editingAgentId) {
+                updateAgent(editingAgentId, formData);
+            } else {
+                createAgent(formData);
+            }
+            
+            closeAgentModal();
+        }
+
+        // EVENT LISTENERS
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            const authForm = document.getElementById('authForm');
+            if (authForm) {
+                authForm.addEventListener('submit', handleAuthSubmit);
+            }
+            
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', searchAgents);
+            }
+            
+            document.querySelectorAll('.filter-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    filterAgents(e.target.getAttribute('data-filter'));
+                });
+            });
+            
+            const agentForm = document.getElementById('agentForm');
+            if (agentForm) {
+                agentForm.addEventListener('submit', handleFormSubmit);
+            }
+            
+            const agentsGrid = document.getElementById('agentsGrid');
+            if (agentsGrid) {
+                agentsGrid.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('action-btn')) {
+                        e.stopPropagation();
+                        const action = e.target.getAttribute('data-action');
+                        const agentId = e.target.getAttribute('data-id');
+                        
+                        switch(action) {
+                            case 'run':
+                                runAgent(agentId);
+                                break;
+                            case 'edit':
+                                editAgent(agentId);
+                                break;
+                            case 'delete':
+                                deleteAgentById(agentId);
+                                break;
+                        }
+                    }
+                });
+            }
+            
+            const agentModal = document.getElementById('agentModal');
+            if (agentModal) {
+                agentModal.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        closeAgentModal();
+                    }
+                });
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAgentModal();
+                }
+            });
+        }
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 AI Agents System - Claude Haiku + GitHub Integration loaded!');
+            
+            setupEventListeners();
+            
+            if (!checkAuthentication()) {
+                document.getElementById('authOverlay').style.display = 'flex';
+            } else {
+                loadApiKey();
+                loadAgents();
+            }
+            
+            setTimeout(function() {
+                switchTab('agents');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
