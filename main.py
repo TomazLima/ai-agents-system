@@ -7,6 +7,29 @@ import numpy as np
 from datetime import datetime, timedelta
 import openpyxl
 
+# CONFIGURAÇÃO CRÍTICA PARA IFRAME EMBEDDING
+st.set_page_config(
+    page_title="PMO Dashboard",
+    page_icon="📊", 
+    layout="wide"
+)
+
+# CONFIGURAÇÕES PARA PERMITIR IFRAME
+st.markdown("""
+<style>
+    /* Remove padding para iframe */
+    .main > div {
+        padding-top: 0rem;
+    }
+    
+    /* Otimizar para iframe */
+    .stApp {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # ============================================
 # 🔧 PAGE CONFIGURATION
 # ============================================
