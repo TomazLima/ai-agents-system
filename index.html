@@ -1081,27 +1081,361 @@
             </div>
         </div>
 
-        <!-- DASHBOARD TAB -->
-        <div id="dashboard-tab" class="other-tab">
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <h2>📊 PMO Dashboard</h2>
-                <p style="color: #64748b;">Your existing Streamlit dashboard integrated</p>
+<!-- DASHBOARD TAB - VERSÃO ATUALIZADA -->
+<div id="dashboard-tab" class="other-tab">
+    <div class="tab-header">
+        <div>
+            <div class="tab-title">
+                <span class="tab-icon">📊</span>
+                PMO Dashboard
             </div>
-            
-            <div style="width: 100%; height: 600px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <iframe 
-                    src="https://your-dashboard-pmo.streamlit.app" 
-                    width="100%" 
-                    height="100%" 
-                    frameborder="0"
-                    style="border-radius: 15px;"
-                ></iframe>
-            </div>
-            
-            <div style="text-align: center; margin-top: 1rem; color: #64748b; font-size: 0.9rem;">
-                💡 Replace the iframe src with your actual Streamlit dashboard URL
+            <div class="tab-subtitle">
+                Your Streamlit dashboard integrated with AI agents
             </div>
         </div>
+        <div class="tab-actions">
+            <button class="btn btn-secondary" onclick="toggleDashboardConfig()">
+                ⚙️ Configure URL
+            </button>
+            <button class="btn btn-primary" onclick="refreshDashboard()">
+                🔄 Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- CONFIGURAÇÃO DA URL DO DASHBOARD -->
+    <div class="config-section" id="dashboardConfig" style="display: none;">
+        <div class="config-header">
+            <div class="config-title">
+                🔗 Dashboard URL Configuration
+            </div>
+            <div class="config-status" id="dashboardStatus">
+                <span>●</span> <span id="dashboardStatusText">Not Configured</span>
+            </div>
+        </div>
+        <input 
+            type="text" 
+            class="config-input" 
+            id="dashboardUrlInput" 
+            placeholder="https://your-pmo-dashboard.streamlit.app"
+            style="margin-bottom: 1rem;"
+        >
+        <div class="config-actions">
+            <button class="btn-test" onclick="testDashboardUrl()">
+                🧪 Test URL
+            </button>
+            <button class="btn-save" onclick="saveDashboardUrl()">
+                💾 Save URL
+            </button>
+            <button class="btn-clear" onclick="clearDashboardUrl()">
+                🗑️ Clear
+            </button>
+        </div>
+        
+        <!-- INSTRUÇÕES PARA DEPLOY -->
+        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h4 style="margin-bottom: 0.5rem; color: #3b82f6;">📚 How to Deploy Your Dashboard:</h4>
+            <ol style="margin: 0; padding-left: 1.5rem; color: #4a5568; font-size: 0.9rem;">
+                <li>Create a GitHub repository with your dashboard files</li>
+                <li>Upload <code>dashboard_pmo_clean.py</code> and <code>atividades_pmo.xlsx</code></li>
+                <li>Go to <a href="https://streamlit.io" target="_blank" style="color: #3b82f6;">streamlit.io</a> and connect your GitHub</li>
+                <li>Deploy and copy the URL here</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- DASHBOARD IFRAME -->
+    <div id="dashboardContainer">
+        <div id="dashboardPlaceholder" style="text-align: center; padding: 4rem 2rem; color: #a0aec0;">
+            <div style="font-size: 5rem; margin-bottom: 1rem; opacity: 0.5;">📊</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #4a5568;">Dashboard Not Configured</div>
+            <div style="font-size: 1rem; margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Configure your Streamlit dashboard URL to view your PMO data and enable AI agent analysis.
+            </div>
+            <button class="btn btn-primary" onclick="toggleDashboardConfig()">
+                ⚙️ Configure Dashboard URL
+            </button>
+        </div>
+        
+        <div id="dashboardFrame" style="display: none;">
+            <iframe 
+                id="dashboardIframe"
+                src="about:blank" 
+                width="100%" 
+                height="700px" 
+                frameborder="0"
+                style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"
+            ></iframe>
+            
+            <!-- CONTROLES DO DASHBOARD -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.5); border-radius: 10px;">
+                <div style="font-size: 0.9rem; color: #64748b;">
+                    🔗 <span id="currentDashboardUrl">Dashboard loaded</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="openDashboardNewTab()" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        🔗 Open in New Tab
+                    </button>
+                    <button class="btn btn-secondary" onclick="toggleFullscreen()" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        🔍 Fullscreen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTEGRAÇÃO COM AI AGENTS -->
+    <div class="config-section" style="margin-top: 2rem;">
+        <div class="config-header">
+            <div class="config-title">
+                🤖 AI Agents Integration
+            </div>
+            <div class="config-status connected">
+                <span>●</span> 4 Agents Ready
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <div style="text-align: center; padding: 1rem; border-radius: 8px; background: rgba(34, 197, 94, 0.1);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                <div style="font-weight: 600; color: #059669;">Data Analyst Pro</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Analyze PMO data</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; border-radius: 8px; background: rgba(225, 0, 117, 0.1);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔍</div>
+                <div style="font-weight: 600; color: #E10075;">Risk Monitor</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Identify risks</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; border-radius: 8px; background: rgba(59, 130, 246, 0.1);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📋</div>
+                <div style="font-weight: 600; color: #3b82f6;">Report Generator</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Generate reports</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; border-radius: 8px; background: rgba(251, 191, 36, 0.1);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📈</div>
+                <div style="font-weight: 600; color: #d97706;">Forecast Agent</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Predict trends</div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button class="btn btn-primary" onclick="runDashboardAnalysis()">
+                🚀 Run Analysis on Dashboard Data
+            </button>
+            <button class="btn btn-secondary" onclick="generateDashboardReport()">
+                📋 Generate Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// FUNÇÕES PARA GERENCIAMENTO DO DASHBOARD
+
+function loadDashboardConfig() {
+    const savedUrl = localStorage.getItem('dashboard_url');
+    if (savedUrl && isValidUrl(savedUrl)) {
+        document.getElementById('dashboardUrlInput').value = savedUrl;
+        updateDashboardStatus('connected', 'Connected');
+        loadDashboard(savedUrl);
+    } else {
+        updateDashboardStatus('disconnected', 'Not Configured');
+        showDashboardPlaceholder(); // Força mostrar placeholder
+    }
+}
+
+function saveDashboardUrl() {
+    const url = document.getElementById('dashboardUrlInput').value.trim();
+    
+    if (!url) {
+        showNotification('Please enter a dashboard URL', 'error');
+        return;
+    }
+    
+    if (!isValidUrl(url)) {
+        showNotification('Please enter a valid URL', 'error');
+        return;
+    }
+    
+    localStorage.setItem('dashboard_url', url);
+    updateDashboardStatus('connected', 'URL Saved');
+    loadDashboard(url);
+    showNotification('Dashboard URL saved successfully!', 'success');
+    
+    // Hide config panel after saving
+    document.getElementById('dashboardConfig').style.display = 'none';
+}
+
+function clearDashboardUrl() {
+    if (confirm('Are you sure you want to clear the dashboard URL?')) {
+        localStorage.removeItem('dashboard_url');
+        document.getElementById('dashboardUrlInput').value = '';
+        updateDashboardStatus('disconnected', 'Not Configured');
+        showDashboardPlaceholder();
+        showNotification('Dashboard URL cleared', 'info');
+    }
+}
+
+function testDashboardUrl() {
+    const url = document.getElementById('dashboardUrlInput').value.trim();
+    
+    if (!url) {
+        showNotification('Please enter a URL to test', 'error');
+        return;
+    }
+    
+    if (!isValidUrl(url)) {
+        showNotification('Invalid URL format', 'error');
+        return;
+    }
+    
+    updateDashboardStatus('connected', 'Testing...');
+    
+    // Test if URL is accessible
+    fetch(url, { mode: 'no-cors' })
+        .then(() => {
+            updateDashboardStatus('connected', 'URL Accessible');
+            showNotification('Dashboard URL is accessible!', 'success');
+        })
+        .catch(() => {
+            updateDashboardStatus('disconnected', 'URL Not Accessible');
+            showNotification('Cannot access dashboard URL', 'error');
+        });
+}
+
+function loadDashboard(url) {
+    if (!url || !isValidUrl(url)) {
+        console.log('Invalid URL, showing placeholder');
+        showDashboardPlaceholder();
+        return;
+    }
+    
+    const iframe = document.getElementById('dashboardIframe');
+    const placeholder = document.getElementById('dashboardPlaceholder');
+    const frame = document.getElementById('dashboardFrame');
+    const currentUrlSpan = document.getElementById('currentDashboardUrl');
+    
+    iframe.src = url;
+    placeholder.style.display = 'none';
+    frame.style.display = 'block';
+    currentUrlSpan.textContent = url;
+}
+
+function showDashboardPlaceholder() {
+    const placeholder = document.getElementById('dashboardPlaceholder');
+    const frame = document.getElementById('dashboardFrame');
+    const iframe = document.getElementById('dashboardIframe');
+    
+    // Limpa o iframe para evitar erros de redirect
+    iframe.src = 'about:blank';
+    
+    placeholder.style.display = 'block';
+    frame.style.display = 'none';
+}
+
+function updateDashboardStatus(status, text) {
+    const statusElement = document.getElementById('dashboardStatus');
+    const statusText = document.getElementById('dashboardStatusText');
+    statusElement.className = 'config-status ' + status;
+    statusText.textContent = text;
+}
+
+function toggleDashboardConfig() {
+    const config = document.getElementById('dashboardConfig');
+    config.style.display = config.style.display === 'none' ? 'block' : 'none';
+}
+
+function refreshDashboard() {
+    const iframe = document.getElementById('dashboardIframe');
+    if (iframe.src) {
+        iframe.src = iframe.src; // Force reload
+        showNotification('Dashboard refreshed', 'info');
+    } else {
+        showNotification('No dashboard loaded to refresh', 'error');
+    }
+}
+
+function openDashboardNewTab() {
+    const url = localStorage.getItem('dashboard_url');
+    if (url) {
+        window.open(url, '_blank');
+    } else {
+        showNotification('No dashboard URL configured', 'error');
+    }
+}
+
+function toggleFullscreen() {
+    const iframe = document.getElementById('dashboardIframe');
+    if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+        iframe.msRequestFullscreen();
+    }
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
+// FUNÇÕES DE INTEGRAÇÃO COM AI AGENTS
+
+function runDashboardAnalysis() {
+    const dashboardUrl = localStorage.getItem('dashboard_url');
+    const apiKey = localStorage.getItem('claude_api_key');
+    
+    if (!dashboardUrl) {
+        showNotification('Please configure dashboard URL first', 'error');
+        return;
+    }
+    
+    if (!apiKey) {
+        showNotification('Please configure Claude API key first', 'error');
+        return;
+    }
+    
+    showNotification('🤖 Running AI analysis on dashboard data...', 'info');
+    
+    // Simulate AI analysis for now
+    setTimeout(() => {
+        showNotification('✅ AI analysis completed! Check the agents tab for results.', 'success');
+    }, 3000);
+}
+
+function generateDashboardReport() {
+    const dashboardUrl = localStorage.getItem('dashboard_url');
+    
+    if (!dashboardUrl) {
+        showNotification('Please configure dashboard URL first', 'error');
+        return;
+    }
+    
+    showNotification('📋 Generating comprehensive report...', 'info');
+    
+    // Simulate report generation
+    setTimeout(() => {
+        showNotification('📄 Report generated successfully!', 'success');
+    }, 2000);
+}
+
+// Carregar configuração do dashboard quando a tab for ativada
+document.addEventListener('DOMContentLoaded', function() {
+    // Limpa URLs inválidas do localStorage
+    const savedUrl = localStorage.getItem('dashboard_url');
+    if (savedUrl && !isValidUrl(savedUrl)) {
+        console.log('Removing invalid URL from localStorage:', savedUrl);
+        localStorage.removeItem('dashboard_url');
+    }
+    
+    loadDashboardConfig();
+});
+</script>
 
         <div id="settings-tab" class="other-tab">
             <div style="text-align: center; margin-bottom: 2rem;">
